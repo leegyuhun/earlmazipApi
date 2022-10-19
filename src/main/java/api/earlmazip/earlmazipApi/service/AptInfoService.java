@@ -17,4 +17,8 @@ public class AptInfoService {
     public List<AptInfoDto> findBySigunguCode(String sigunguCode) {
         return aptInfoRepository.findBySigunguCode(sigunguCode).stream().map(AptInfoDto::new).collect(Collectors.toList());
     }
+
+    public List<AptInfoDto> findBySigunguCodeAndAs3(String sigunguCode, String landDong) {
+        return aptInfoRepository.findBySigunguCodeAndAs3(sigunguCode, landDong).stream().map(AptInfoDto::new).collect(Collectors.toList());
+    }
 }

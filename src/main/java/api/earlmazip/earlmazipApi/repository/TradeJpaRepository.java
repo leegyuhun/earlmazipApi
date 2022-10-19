@@ -1,10 +1,8 @@
 package api.earlmazip.earlmazipApi.repository;
 
 import api.earlmazip.earlmazipApi.domain.AptPriceRaw;
-import api.earlmazip.earlmazipApi.domain.QAptInfo;
 import api.earlmazip.earlmazipApi.domain.QAptPriceRaw;
-import api.earlmazip.earlmazipApi.domain.dto.AptPriceDto;
-import api.earlmazip.earlmazipApi.domain.dto.TradeSearchCondition;
+import api.earlmazip.earlmazipApi.domain.dto.SearchCondition;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
@@ -34,11 +32,11 @@ public class TradeJpaRepository {
                         qAptPriceRaw.dealYear.eq("2022"))
                 .orderBy(qAptPriceRaw.dealDate.desc())
                 .offset(0)
-                .limit(100)
+                .limit(200)
                 .fetch();
     }
 
-    public List<AptPriceRaw> findByBuilder(TradeSearchCondition condition) {
+    public List<AptPriceRaw> findByBuilder(SearchCondition condition) {
         BooleanBuilder builder = new BooleanBuilder();
         if (hasText(condition.getSigunguCode())) {
             builder.and(qAptPriceRaw.sigunguCode.eq(condition.getSigunguCode()));
@@ -52,11 +50,17 @@ public class TradeJpaRepository {
         if (hasText(condition.getLandDong())) {
             builder.and(qAptPriceRaw.landDong.eq(condition.getLandDong()));
         }
+        if (hasText(condition.getUseAreaType())) {
+            if (!condition.getUseAreaType().equals("UA01")) {
+                builder.and(qAptPriceRaw.useAreaType.eq(condition.getUseAreaType()));
+            }
+        }
 
         return queryFactory
                 .selectFrom(qAptPriceRaw)
                 .where(builder)
                 .orderBy(qAptPriceRaw.dealDate.desc())
+                .limit(500)
                 .fetch();
     }
 }

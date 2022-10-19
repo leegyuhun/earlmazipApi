@@ -23,7 +23,8 @@ public class AptInfoController {
     private final AptInfoService aptInfoService;
 
     @GetMapping("/api/v1/aptinfo")
-    public @ResponseBody Map<String, Object> findAptInfoBySigunguCode(@RequestParam(value = "sigunguCode", defaultValue = "") String sigunguCode) {
+    public @ResponseBody Map<String, Object> findAptInfoBySigunguCode(@RequestParam(value = "sigunguCode", defaultValue = "") String sigunguCode,
+                                                                      @RequestParam(value = "landDong", defaultValue = "") String landDong) {
         Map<String, Object> returnData = new HashMap<>();
         List<AptInfoDto> aptInfos = new ArrayList<>();
 
@@ -35,7 +36,11 @@ public class AptInfoController {
             returnData.put("list", aptInfos);
 //            throw new RuntimeException("parameter is empty. [sigunguCode]");
         } else {
-            aptInfos = aptInfoService.findBySigunguCode(sigunguCode);
+            if (landDong.isEmpty()) {
+                aptInfos = aptInfoService.findBySigunguCode(sigunguCode);
+            } else{
+                aptInfos = aptInfoService.findBySigunguCodeAndAs3(sigunguCode, landDong);
+            }
 
             if (aptInfos.size() == 0) {
                 returnData.put("code", "9000");
@@ -44,7 +49,7 @@ public class AptInfoController {
                 returnData.put("count", aptInfos.size());
                 returnData.put("list", aptInfos);
             } else {
-                returnData.put("code", "1000");
+                returnData.put("code", "0000");
                 returnData.put("msg", "success");
                 returnData.put("dtl", "");
                 returnData.put("count", aptInfos.size());

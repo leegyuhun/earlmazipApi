@@ -1,8 +1,7 @@
 package api.earlmazip.earlmazipApi.controller;
 
-import api.earlmazip.earlmazipApi.domain.dto.AptInfoDto;
 import api.earlmazip.earlmazipApi.domain.dto.AptPriceDto;
-import api.earlmazip.earlmazipApi.domain.dto.TradeSearchCondition;
+import api.earlmazip.earlmazipApi.domain.dto.SearchCondition;
 import api.earlmazip.earlmazipApi.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,7 @@ public class TradeController {
 
         tradeList = tradeService.getTradeListMonthlyBySigunguCode(sigunguCode, yyyymm.substring(0, 4), yyyymm.substring(4, 6));
 
-        returnData.put("code", "1000");
+        returnData.put("code", "0000");
         returnData.put("msg", "success");
         returnData.put("dtl", "");
         returnData.put("count", tradeList.size());
@@ -49,31 +48,43 @@ public class TradeController {
             @RequestParam(value = "sigunguCode", defaultValue = "") String sigunguCode,
             @RequestParam(value = "year", defaultValue = "") String year,
             @RequestParam(value = "mon", defaultValue = "") String mon,
-            @RequestParam(value = "landDong", defaultValue = "") String landDong) {
+            @RequestParam(value = "landDong", defaultValue = "") String landDong,
+            @RequestParam(value = "uaType", defaultValue = "UA01") String uaType) {
         Map<String, Object> returnData = new HashMap<>();
-        TradeSearchCondition con = new TradeSearchCondition();
+        SearchCondition con = new SearchCondition();
 
         List<AptPriceDto> tradeList = new ArrayList<>();
 
-//        String tmp1 = yyyymm.substring(0, 4);
-//        String tmp2 = yyyymm.substring(4, 6);
+        if (sigunguCode.isEmpty() || year.isEmpty()) {
+            returnData.put("code", "9999");
+            returnData.put("msg", "parameter is empty.");
+            returnData.put("dtl", "sigunguCode and year");
+            returnData.put("count", tradeList.size());
+            returnData.put("list", tradeList);
+        } else {
+            con.setSigunguCode(sigunguCode);
+            con.setDealYear(year);
+            con.setDealMon(mon);
+            con.setLandDong(landDong);
+            con.setUseAreaType(uaType);
 
-        con.setSigunguCode(sigunguCode);
-        con.setDealYear(year);
-        con.setDealMon(mon);
-        con.setLandDong(landDong);
+            tradeList = tradeService.getTradeListMonthlyV2(con);
 
-        tradeList = tradeService.getTradeListMonthlyV2(con);
-
-        returnData.put("code", "1000");
-        returnData.put("msg", "success");
-        returnData.put("dtl", "");
-        returnData.put("count", tradeList.size());
-        returnData.put("list", tradeList);
-
+            returnData.put("code", "0000");
+            returnData.put("msg", "success");
+            returnData.put("dtl", "");
+            returnData.put("count", tradeList.size());
+            returnData.put("list", tradeList);
+        }
         return returnData;
     }
 
+
+    /**
+     * 구코드로 최근거래 200 조회
+     * @param sigunguCode
+     * @return
+     */
     @GetMapping("/api/v1/tradelist")
     public @ResponseBody Map<String, Object> getTradeListMonthly(
             @RequestParam(value = "sigunguCode", defaultValue = "") String sigunguCode
@@ -93,7 +104,41 @@ public class TradeController {
         } else {
             tradeList = tradeService.getTradeListBySigunguCode(sigunguCode);
 
-            returnData.put("code", "1000");
+            returnData.put("code", "0000");
+            returnData.put("msg", "success");
+            returnData.put("dtl", "");
+            returnData.put("count", tradeList.size());
+            returnData.put("list", tradeList);
+        }
+        return returnData;
+    }
+
+    /**
+     * 거래일자와 가격 조건으로 매매내역 조회
+     * @param dealDate
+     * @param dealAmt
+     * @return
+     */
+    @GetMapping("/api/v1/tradelistByDealDateAndDealAmt")
+    public @ResponseBody Map<String, Object> getTradeListByDealDateAndDealAmtV1(
+            @RequestParam(value = "dealDate", defaultValue = "") String dealDate,
+            @RequestParam(value = "dealAmt", defaultValue = "0") int dealAmt) {
+        Map<String, Object> returnData = new HashMap<>();
+        List<AptPriceDto> tradeList = new ArrayList<>();
+
+//        String tmp1 = yyyymm.substring(0, 4);
+//        String tmp2 = yyyymm.substring(4, 6);
+        if (dealDate.isEmpty() || dealAmt == 0) {
+            returnData.put("code", "9999");
+            returnData.put("msg", "parameter is empty.");
+            returnData.put("dtl", "sigunguCode");
+            returnData.put("count", tradeList.size());
+            returnData.put("list", tradeList);
+//            throw new RuntimeException("parameter is empty. [sigunguCode]");
+        } else {
+            tradeList = tradeService.getTradeListByDealDateAndDealAmt(dealDate, dealAmt);
+
+            returnData.put("code", "0000");
             returnData.put("msg", "success");
             returnData.put("dtl", "");
             returnData.put("count", tradeList.size());

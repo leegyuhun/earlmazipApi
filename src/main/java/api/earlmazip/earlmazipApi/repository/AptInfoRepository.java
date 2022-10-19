@@ -10,4 +10,6 @@ import java.util.List;
 public interface AptInfoRepository extends JpaRepository<AptInfo, Long> {
 
     List<AptInfo> findBySigunguCode(String sigunguCode);
+
+    List<AptInfo> findBySigunguCodeAndAs3(String sigunguCode, String landDong);
 }

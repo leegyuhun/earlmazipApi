@@ -1,18 +1,15 @@
 package api.earlmazip.earlmazipApi.repository;
 
 import api.earlmazip.earlmazipApi.domain.AptPriceRaw;
-import api.earlmazip.earlmazipApi.domain.dto.TradeSearchCondition;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import api.earlmazip.earlmazipApi.domain.dto.SearchCondition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class TradeJpaRepositoryTest {
@@ -37,7 +34,7 @@ class TradeJpaRepositoryTest {
 
     @Test
     void findByBuilder() {
-        TradeSearchCondition con = new TradeSearchCondition();
+        SearchCondition con = new SearchCondition();
         con.setSigunguCode("11500");
         con.setDealYear("2022");
         con.setLandDong("방화동");

@@ -1,7 +1,7 @@
 package api.earlmazip.earlmazipApi.service;
 
 import api.earlmazip.earlmazipApi.domain.dto.AptPriceDto;
-import api.earlmazip.earlmazipApi.domain.dto.TradeSearchCondition;
+import api.earlmazip.earlmazipApi.domain.dto.SearchCondition;
 import api.earlmazip.earlmazipApi.repository.TradeJpaRepository;
 import api.earlmazip.earlmazipApi.repository.TradeRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +26,11 @@ public class TradeService {
         return tradeJpaRepository.findBySigungu_Qerydsl(sigunguCode).stream().map(AptPriceDto::new).collect(Collectors.toList());
     }
 
-    public List<AptPriceDto> getTradeListMonthlyV2(TradeSearchCondition con) {
+    public List<AptPriceDto> getTradeListMonthlyV2(SearchCondition con) {
         return tradeJpaRepository.findByBuilder(con).stream().map(AptPriceDto::new).collect(Collectors.toList());
     }
 
-
+    public List<AptPriceDto> getTradeListByDealDateAndDealAmt(String dealDate, int dealAmt) {
+        return tradeRepository.findByDealDateAndDealAmt(dealDate, dealAmt).stream().map(AptPriceDto::new).collect(Collectors.toList());
+    }
 }
